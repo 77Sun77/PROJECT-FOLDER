@@ -51,7 +51,8 @@ public class Window : MonoBehaviour
     }
     public void Quit()
     {
-        Destroy(gameObject);
+        //Destroy(gameObject);
+        Disable();
     }
 
 
@@ -62,7 +63,7 @@ public class Window : MonoBehaviour
     }
     public void Active()
     {
-
+        gameObject.SetActive(true);
     }
 
     private void OnEnable()

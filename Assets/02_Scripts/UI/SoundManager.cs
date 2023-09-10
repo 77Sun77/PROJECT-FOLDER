@@ -6,6 +6,8 @@ public class SoundManager : MonoBehaviour
 {
     public AudioSource BGM, Effect;
     SettingManager Setting;
+
+    float BGM_Volume, Effect_Volume;
     void Start()
     {
         DontDestroyOnLoad(gameObject);
