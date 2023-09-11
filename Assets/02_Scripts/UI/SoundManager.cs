@@ -13,6 +13,7 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         Setting = SettingManager.instance;
+
     }
 
     void Update()

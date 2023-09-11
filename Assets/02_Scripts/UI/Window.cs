@@ -5,16 +5,20 @@ using UnityEngine.UI;
 
 public class Window : MonoBehaviour
 {
-    public RectTransform bg; // 이름 변경 예정
+    public RectTransform fullSize, smallSize; // 이름 변경 예정
     RectTransform tr;
-    public bool isDisable;
+    public bool isDisable, isMax, isPrefab;
     float num;
     Vector3 pos;
     Animator anim;
+    public OpenFile f;
     void Awake()
     {
         tr = GetComponent<RectTransform>();
         anim = GetComponent<Animator>();
+
+        fullSize = GameObject.Find("BG").GetComponent<RectTransform>();
+        smallSize = GameObject.Find("BG_2").GetComponent<RectTransform>();
     }
 
     // Update is called once per frame
@@ -24,14 +28,10 @@ public class Window : MonoBehaviour
         {
             num += Time.deltaTime*9;
             tr.anchoredPosition = Vector3.Lerp(pos,new Vector3(0, -400), num);
-            if(num > 1)
-            {
-                isDisable = false;
-                num = 0;
-            }
+            
         }   
     }
-    public void Minimization()
+    public void Minimization() // 최소화
     {
         pos = tr.anchoredPosition;
         isDisable = true;
@@ -43,16 +43,38 @@ public class Window : MonoBehaviour
         // GameObject.Find("Canvas").GetComponent<CanvasScaler>().referenceResolution = resolution;
 
 
-        tr.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, bg.rect.width);
+        tr.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, fullSize.rect.width);
 
-        tr.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, bg.rect.height);
+        tr.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, fullSize.rect.height);
         
         tr.anchoredPosition = Vector2.zero;
+    }
+    public void Restore()
+    {
+        tr.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, smallSize.rect.width);
+
+        tr.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, smallSize.rect.height);
+
+        tr.anchoredPosition = Vector2.zero;
+    }
+
+    public void MaxMiniSIze()
+    {
+        if (isMax)
+        {
+            Restore();
+        }
+        else
+        {
+            Maximize();
+        }
+        isMax = !isMax;
     }
     public void Quit()
     {
         //Destroy(gameObject);
-        Disable();
+        Taskbar.instance.Delete_Obj(gameObject, isPrefab);
+        f.go = null;
     }
 
 
@@ -60,14 +82,18 @@ public class Window : MonoBehaviour
     public void Disable()
     {
         gameObject.SetActive(false);
+        num = 0;
     }
     public void Active()
     {
         gameObject.SetActive(true);
+        isDisable = false;
     }
 
     private void OnEnable()
     {
-        tr.anchoredPosition = pos;
+
+        //tr.anchoredPosition = pos;
+        tr.anchoredPosition = Vector2.zero;
     }
 }
