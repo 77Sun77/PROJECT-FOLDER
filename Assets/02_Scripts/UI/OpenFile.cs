@@ -22,7 +22,7 @@ public class OpenFile : MonoBehaviour
         }
         else
         {
-            go.SetActive(true);
+            Active();
         }
         go.GetComponent<Window>().isPrefab = isPrefab;
         

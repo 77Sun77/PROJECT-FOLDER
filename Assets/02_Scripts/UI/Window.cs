@@ -12,6 +12,7 @@ public class Window : MonoBehaviour
     Vector3 pos;
     Animator anim;
     public OpenFile f;
+
     void Awake()
     {
         tr = GetComponent<RectTransform>();
@@ -88,6 +89,7 @@ public class Window : MonoBehaviour
     {
         gameObject.SetActive(true);
         isDisable = false;
+        tr.SetAsLastSibling();
     }
 
     private void OnEnable()
