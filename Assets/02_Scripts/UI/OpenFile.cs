@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public static class String
 {
@@ -15,7 +16,7 @@ public static class String
         return count;
     }
 }
-public class OpenFile : MonoBehaviour
+public class OpenFile : MonoBehaviour, IPointerClickHandler 
 {
     public GameObject window;
     public bool isPrefab;
@@ -23,8 +24,14 @@ public class OpenFile : MonoBehaviour
 
     public Text nameTxt;
 
+    //Double Click 처리용 변수
+    public float m_DoubleClickSecond = 0.25f;
+    private bool m_IsOneClick = false;
+    private double m_Timer = 0;
+
     private void Start()
     {
+
         if (nameTxt)
         {
             string txt = nameTxt.text.Replace(" ", "");
@@ -38,8 +45,15 @@ public class OpenFile : MonoBehaviour
                 nameTxt.text = txt;
 
             }
+        }     
+    }
+
+    public void OnPointerClick(PointerEventData eData) 
+    {
+        if (eData.clickCount == 2)//더블클릭을 위한 조건
+        {
+            Open(); //더블클릭하면 Open 실행
         }
-        
     }
     
     public void Open()
@@ -51,7 +65,7 @@ public class OpenFile : MonoBehaviour
             {
                 window.SetActive(true);
                 go = window;
-                
+
             }
             Taskbar.instance.Add_Obj(go, this);
             go.GetComponent<Window>().f = this;
@@ -62,7 +76,7 @@ public class OpenFile : MonoBehaviour
         }
         go.GetComponent<Window>().isPrefab = isPrefab;
 
-        
+
     }
 
     public void Active()

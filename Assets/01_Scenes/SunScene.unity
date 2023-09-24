@@ -1423,6 +1423,7 @@ MonoBehaviour:
   isPrefab: 0
   go: {fileID: 0}
   nameTxt: {fileID: 0}
+  m_DoubleClickSecond: 0.25
 --- !u!224 &1147727546 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3712331486577387813, guid: eeca423c75d0a6d4ba42bd2ed4bb3364, type: 3}
@@ -2709,6 +2710,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 493701339}
     m_Modifications:
+    - target: {fileID: 3712331486577387812, guid: eeca423c75d0a6d4ba42bd2ed4bb3364, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3712331486577387813, guid: eeca423c75d0a6d4ba42bd2ed4bb3364, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
