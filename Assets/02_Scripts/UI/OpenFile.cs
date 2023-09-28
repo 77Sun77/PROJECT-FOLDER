@@ -16,19 +16,22 @@ public static class String
         return count;
     }
 }
-public class OpenFile : MonoBehaviour, IPointerClickHandler 
+public class OpenFile : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public GameObject window;
     public bool isPrefab;
     public GameObject go;
 
     public Text nameTxt;
+    Image img;
 
     //Double Click 처리용 변수
-    public float m_DoubleClickSecond = 0.25f;
+    public static GameObject SelectFile;
+    public float m_DoubleClickSecond = 1.5f;
+    private int clickCount;
     private bool m_IsOneClick = false;
     private double m_Timer = 0;
-
+    private bool PointerUp;
     private void Start()
     {
 
@@ -45,19 +48,85 @@ public class OpenFile : MonoBehaviour, IPointerClickHandler
                 nameTxt.text = txt;
 
             }
-        }     
+        }
+        img = GetComponent<Image>();
     }
+    void Update()
+    {
+        if (PointerUp)
+        {
+            Color c = img.color;
+            c.a = 15f / 255f;
+            img.color = c;
 
+        }
+        else if(SelectFile == gameObject)
+        {
+            Color c = img.color;
+            c.a = 35f / 255f;
+            img.color = c;
+            
+        }
+        else
+        {
+            Color c = img.color;
+            c.a = 0;
+            img.color = c;
+        }
+
+        if (Input.GetButtonDown("Submit") && SelectFile == gameObject)
+        {
+            Open();
+        }
+
+        if (m_IsOneClick)
+        {
+            m_Timer += Time.deltaTime;
+        }
+
+    }
     public void OnPointerClick(PointerEventData eData) 
     {
-        if (eData.clickCount == 2)//더블클릭을 위한 조건
+        clickCount++;
+        if(clickCount == 2)
         {
-            Open(); //더블클릭하면 Open 실행
+            
+           
+            if (m_Timer < m_DoubleClickSecond)
+            {
+                Open();
+                return;
+
+            }
+            else
+            {
+                clickCount = 1;
+                m_Timer = 0;
+                m_IsOneClick = false;
+            }
         }
+        else
+        {
+            m_IsOneClick = true;
+        }
+
+        SelectFile = gameObject;
+        
     }
-    
+    public void OnPointerEnter(PointerEventData eData)
+    {
+        PointerUp = true;
+    }
+    public void OnPointerExit(PointerEventData eData)
+    {
+        PointerUp = false;
+    }
     public void Open()
     {
+        clickCount = 0;
+        m_Timer = 0;
+        m_IsOneClick = false;
+        SelectFile = null;
         if (!go)
         {
             if (isPrefab) go = Instantiate(window, GameObject.Find("Canvas").transform);
