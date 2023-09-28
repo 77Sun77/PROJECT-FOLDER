@@ -32,6 +32,8 @@ public class OpenFile : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
     private bool m_IsOneClick = false;
     private double m_Timer = 0;
     private bool PointerUp;
+
+    bool OnClick;
     private void Start()
     {
 
@@ -84,34 +86,44 @@ public class OpenFile : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
             m_Timer += Time.deltaTime;
         }
 
+        if (Input.GetMouseButtonDown(0))
+        {
+            OnClick = true;
+        }
+
     }
     public void OnPointerClick(PointerEventData eData) 
     {
-        clickCount++;
-        if(clickCount == 2)
+        if(eData.button == PointerEventData.InputButton.Left)
         {
             
-           
-            if (m_Timer < m_DoubleClickSecond)
+            clickCount++;
+            if (clickCount == 2)
             {
-                Open();
-                return;
 
+
+                if (m_Timer < m_DoubleClickSecond)
+                {
+                    Open();
+                    return;
+
+                }
+                else
+                {
+                    clickCount = 1;
+                    m_Timer = 0;
+                    m_IsOneClick = false;
+                }
             }
             else
             {
-                clickCount = 1;
-                m_Timer = 0;
-                m_IsOneClick = false;
+                m_IsOneClick = true;
             }
-        }
-        else
-        {
-            m_IsOneClick = true;
+
+            SelectFile = gameObject;
+
         }
 
-        SelectFile = gameObject;
-        
     }
     public void OnPointerEnter(PointerEventData eData)
     {
