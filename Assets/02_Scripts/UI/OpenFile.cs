@@ -16,7 +16,7 @@ public static class String
         return count;
     }
 }
-public class OpenFile : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public GameObject window;
     public bool isPrefab;
@@ -31,7 +31,8 @@ public class OpenFile : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
     private int clickCount;
     private bool m_IsOneClick = false;
     private double m_Timer = 0;
-    private bool PointerUp;
+    private bool PointerUp, OnDrag;
+    Vector2 clickVec;
 
     bool OnClick;
     private void Start()
@@ -91,12 +92,31 @@ public class OpenFile : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
             OnClick = true;
         }
 
-    }
-    public void OnPointerClick(PointerEventData eData) 
-    {
-        if(eData.button == PointerEventData.InputButton.Left)
+
+        if (Input.GetMouseButtonUp(0))
         {
-            
+            clickVec = Vector2.zero;
+            OnDrag = false;
+        }
+
+        if(clickVec != Vector2.zero && Vector2.Distance(clickVec, Camera.main.ScreenToWorldPoint(Input.mousePosition)) > 0.1f && !OnDrag)
+        {
+            OnDrag = true;
+            clickCount = 0;
+            m_Timer = 0;
+            m_IsOneClick = false;
+        }
+
+        if (OnDrag)
+        {
+            transform.position = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        }
+    }
+    public void OnPointerDown(PointerEventData eData) 
+    {
+        if(eData.button == PointerEventData.InputButton.Left && !OnDrag)
+        {
+            clickVec = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             clickCount++;
             if (clickCount == 2)
             {
@@ -112,7 +132,7 @@ public class OpenFile : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
                 {
                     clickCount = 1;
                     m_Timer = 0;
-                    m_IsOneClick = false;
+                    //m_IsOneClick = false;
                 }
             }
             else

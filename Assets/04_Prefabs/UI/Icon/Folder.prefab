@@ -216,7 +216,8 @@ MonoBehaviour:
   isPrefab: 1
   go: {fileID: 0}
   nameTxt: {fileID: 5640721446842148929}
-  m_DoubleClickSecond: 1.5
+  m_DoubleClickSecond: 1
+  m_Timer: 0
 --- !u!1 &4840235480526630357
 GameObject:
   m_ObjectHideFlags: 0

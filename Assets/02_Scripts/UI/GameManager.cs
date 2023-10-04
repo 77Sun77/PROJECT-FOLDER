@@ -68,7 +68,8 @@ public class GameManager : MonoBehaviour
                     {
                         createPrefab.GetComponent<IconOption>().OpenOption = go;
                         if (OpenFile.SelectFile != go) OpenFile.SelectFile = null;
-                        
+                        print(OpenFile.SelectFile);
+                        print(go);
                     }
                     else
                     {
@@ -76,12 +77,14 @@ public class GameManager : MonoBehaviour
                     }
                     return;
                 }
+                else if (Input.GetMouseButtonDown(0))
+                {
+                    if (OpenFile.SelectFile != go) OpenFile.SelectFile = null;
+                }
                 
             }
 
             
-
-            OpenFile.SelectFile = null;
 
         }
 

@@ -19,4 +19,20 @@ public class IconOption : MonoBehaviour
     {
         
     }
+
+    public void Open()
+    {
+        OpenOption.GetComponent<OpenFile>().Open();
+        Destroy(gameObject);
+    }
+
+    public void Delete()
+    {
+        Destroy(OpenOption);
+        Destroy(gameObject);
+    }
+    public void NameChange()
+    {
+
+    }
 }
