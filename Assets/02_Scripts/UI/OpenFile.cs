@@ -109,14 +109,14 @@ public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler
 
         if (OnDrag)
         {
-            transform.position = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            transform.position = (Vector2)GameManager.instance.cursor.position;
         }
     }
     public void OnPointerDown(PointerEventData eData) 
     {
         if(eData.button == PointerEventData.InputButton.Left && !OnDrag)
         {
-            clickVec = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            clickVec = GameManager.instance.cursor.position;
             clickCount++;
             if (clickCount == 2)
             {
@@ -161,7 +161,7 @@ public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler
         SelectFile = null;
         if (!go)
         {
-            if (isPrefab) go = Instantiate(window, GameObject.Find("Canvas").transform);
+            if (isPrefab) go = Instantiate(window, GameManager.instance.screen);
             else
             {
                 window.SetActive(true);

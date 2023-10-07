@@ -23,20 +23,29 @@ public class MoveWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             
             if(moveActive)
             {
+                /*
                 Vector2 vec = Input.mousePosition;
                 vec = WorldPoint(Input.mousePosition) - offset;
                 
                 window.position = vec;
-                print(offset.x);
-                
+                */
+                Vector2 vec = Input.mousePosition;
+                vec = (Vector2)GameManager.instance.cursor.position - offset;
+
+                window.position = vec;
+
             }
         }
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        /*
         isDown = true;
         offset = WorldPoint(Input.mousePosition) - (Vector2)window.position;
+        */
+        isDown = true;
+        offset = (Vector2)GameManager.instance.cursor.position - (Vector2)window.position;
     }
     public void OnPointerUp(PointerEventData eventData)
     {

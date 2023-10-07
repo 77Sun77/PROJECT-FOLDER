@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/BananaEugene/CursorControl/Demo/DemoScene.unity
+    guid: 7c9a31936b9f9eb41b7cc28d7c43f27b
+  - enabled: 1
     path: Assets/01_Scenes/MainMenu.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
