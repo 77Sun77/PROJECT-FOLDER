@@ -32,7 +32,8 @@ public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler
     private bool m_IsOneClick = false;
     private double m_Timer = 0;
     private bool PointerUp, OnDrag;
-    Vector2 clickVec;
+    public bool DontDestroy, isFolder;
+    Vector2 clickVec, offset;
 
     bool OnClick;
     private void Start()
@@ -96,7 +97,27 @@ public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler
         if (Input.GetMouseButtonUp(0))
         {
             clickVec = Vector2.zero;
-            OnDrag = false;
+            if (OnDrag)
+            {
+                var results = GameManager.instance.UR.UI_Raycast(Camera.main.WorldToScreenPoint(transform.position));
+                if (results.Count != 0)
+                {
+                    foreach (RaycastResult result in results)
+                    {
+                        
+                        if (result.gameObject.CompareTag("TableData"))
+                        {
+                            
+                            transform.position = result.gameObject.transform.position;
+                            break;
+                        }
+                        
+                    }
+                }
+                OnDrag = false;
+
+            }
+            
         }
 
         if(clickVec != Vector2.zero && Vector2.Distance(clickVec, Camera.main.ScreenToWorldPoint(Input.mousePosition)) > 0.1f && !OnDrag)
@@ -105,11 +126,12 @@ public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler
             clickCount = 0;
             m_Timer = 0;
             m_IsOneClick = false;
+            GameManager.instance.isGrab = true;
         }
 
         if (OnDrag)
         {
-            transform.position = (Vector2)GameManager.instance.cursor.position;
+            transform.position = (Vector2)GameManager.instance.cursor.position- offset;
         }
     }
     public void OnPointerDown(PointerEventData eData) 
@@ -141,7 +163,7 @@ public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler
             }
 
             SelectFile = gameObject;
-
+            offset = (Vector2)GameManager.instance.cursor.position - (Vector2)transform.position;
         }
 
     }

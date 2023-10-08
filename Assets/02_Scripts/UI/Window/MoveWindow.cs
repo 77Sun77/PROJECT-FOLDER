@@ -19,7 +19,11 @@ public class MoveWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (isDown)
         {
-            if(Vector3.Distance(clickPoint, Input.mousePosition) > 5 && !moveActive) moveActive = true;
+            if(Vector3.Distance(clickPoint, Input.mousePosition) > 5 && !moveActive)
+            {
+                moveActive = true;
+                GameManager.instance.isGrab = true;
+            }
             
             if(moveActive)
             {

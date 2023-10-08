@@ -13,12 +13,12 @@ public class GameManager : MonoBehaviour
 
     public Window lastOpenWin;
 
+    [Header("CustomComponent")]
+    public UIRaycast UR;
+
     [Header("IconOption")]
     public GameObject IconOptionPrefab;
     public Transform Canvas;
-    public GraphicRaycaster gr;
-    public PointerEventData pe;
-    public EventSystem es;
     GameObject createPrefab;
 
     public Transform screen;
@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
     public Transform cursor;
 
     public Boundary Boundary_X, Boundary_Y;
+
+    public bool isGrab;
 
     [Serializable]
     public class Boundary
@@ -45,27 +47,38 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-
+        if (Input.GetMouseButtonUp(0)) isGrab = false;
         Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         //pos.x = Mathf.Clamp(pos.x, -6.2f, 5.95f);
         //pos.y = Mathf.Clamp(pos.y, -2.22f, 3.45f);
         Vector2 posTemp = Vector2.zero;
-        bool isOver = false;
-        (isOver, posTemp.x) = IsOver(Boundary_X, pos);
-        if (isOver)
+        bool isOver_X = false, isOver_Y = false;
+        (isOver_X, posTemp.x) = IsOver(Boundary_X, pos);
+        (isOver_Y, posTemp.y) = IsOver(Boundary_Y, pos);
+        if((isOver_X || isOver_Y) && !isGrab)
         {
-            pos.x = posTemp.x;
-            
-            UnityEngine.InputSystem.Mouse.current.WarpCursorPosition(PositionConverter(pos));
+            Cursor.visible = true;
         }
-        (isOver, posTemp.y) = IsOver(Boundary_Y, pos);
-        if (isOver)
+        else
         {
-            pos.y = posTemp.y;
-            
-            UnityEngine.InputSystem.Mouse.current.WarpCursorPosition(PositionConverter(pos));
+            Cursor.visible = false;
+            if (isOver_X)
+            {
+                pos.x = posTemp.x;
+
+                UnityEngine.InputSystem.Mouse.current.WarpCursorPosition(PositionConverter(pos));
+            }
+            if (isOver_Y)
+            {
+                pos.y = posTemp.y;
+
+                UnityEngine.InputSystem.Mouse.current.WarpCursorPosition(PositionConverter(pos));
+            }
+
+            cursor.position = pos;
         }
-        cursor.position = pos;
+        
+        
         //pos.x = Mathf.Clamp(pos.x, FloatConverter(Boundary_X).Item1, FloatConverter(Boundary_X).Item2);
         //pos.y = Mathf.Clamp(pos.y, FloatConverter(Boundary_Y).Item1, FloatConverter(Boundary_Y).Item2);
 
@@ -78,11 +91,8 @@ public class GameManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
 
-            pe = new PointerEventData(es);
-            pe.position = Input.mousePosition;
-            List<RaycastResult> results = new List<RaycastResult>();
-            gr.Raycast(pe, results);
 
+            var results = UR.UI_Raycast(Input.mousePosition);
 
             if (results.Count != 0)
             {
@@ -114,10 +124,12 @@ public class GameManager : MonoBehaviour
                     createPrefab.transform.position = vec;
                     if (go)
                     {
-                        createPrefab.GetComponent<IconOption>().OpenOption = go;
+                        
+                        IconOption io = createPrefab.GetComponent<IconOption>();
+                        io.OpenOption = go;
+                        io.DontDestroy = go.GetComponent<OpenFile>().DontDestroy;
                         if (OpenFile.SelectFile != go) OpenFile.SelectFile = null;
-                        print(OpenFile.SelectFile);
-                        print(go);
+                        
                     }
                     else
                     {
