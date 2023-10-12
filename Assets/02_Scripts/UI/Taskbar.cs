@@ -21,17 +21,19 @@ public class Taskbar : MonoBehaviour
            
     }
 
-    public void Add_Obj(GameObject obj, OpenFile f)
+    public void Add_Obj(GameObject obj, OpenFile f, Sprite sprite)
     {
         objects.Add(obj, f);
-        Instantiate(TaskbarIcon, Icon_Parent).GetComponent<Taskbar_Icon>().f = f;
+        Instantiate(TaskbarIcon, Icon_Parent).GetComponent<Taskbar_Icon>().Setting(f, sprite);
     }
     public void Delete_Obj(GameObject obj, bool isPrefab)
     {
         objects.Remove(obj);
+        Destroy(obj.GetComponent<Window>().icon.gameObject);
         if (isPrefab)
         {
-            Destroy(obj);
+            //Destroy(obj);
+            obj.SetActive(false);// Test coding
         }
         else
         {

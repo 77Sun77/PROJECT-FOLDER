@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     public Transform Canvas;
     GameObject createPrefab;
 
-    public Transform screen;
+    public Transform screen, windowParent;
 
     public Transform cursor;
 
@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
         public enum Direction { Horizontal, Vertical };
         public Direction Dir;
     }
-    void Start()
+    void Awake()
     {
         if(!instance) instance = this;
         Canvas = GameObject.Find("Canvas").transform;
@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        cursor.GetComponent<RectTransform>().SetAsLastSibling();
         if (Input.GetMouseButtonUp(0)) isGrab = false;
         Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         //pos.x = Mathf.Clamp(pos.x, -6.2f, 5.95f);
@@ -57,6 +58,13 @@ public class GameManager : MonoBehaviour
         (isOver_Y, posTemp.y) = IsOver(Boundary_Y, pos);
         if((isOver_X || isOver_Y) && !isGrab)
         {
+            if(Cursor.visible == false)
+            {
+                if (isOver_X) pos.x = posTemp.x;
+                if (isOver_Y) pos.y = posTemp.y;
+                cursor.position = pos;
+            }
+            
             Cursor.visible = true;
         }
         else
@@ -91,7 +99,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
 
-
+            bool isReturn = false;
             var results = UR.UI_Raycast(Input.mousePosition);
 
             if (results.Count != 0)
@@ -109,6 +117,11 @@ public class GameManager : MonoBehaviour
                         go = result.gameObject;
                         break;
                     }
+                    else if(result.gameObject.CompareTag("Calendar") || result.gameObject.CompareTag("Taskbar"))
+                    {
+                        isReturn = true;
+                        break;
+                    }
                 }
 
                 if (createPrefab)
@@ -117,7 +130,7 @@ public class GameManager : MonoBehaviour
                     Destroy(createPrefab);
                 }
 
-                if (Input.GetMouseButtonDown(1))
+                if (Input.GetMouseButtonDown(1) && !isReturn)
                 {
                     createPrefab = Instantiate(IconOptionPrefab, Canvas);
                     Vector2 vec = Camera.main.ScreenToWorldPoint(Input.mousePosition);

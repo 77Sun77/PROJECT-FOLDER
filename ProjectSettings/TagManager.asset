@@ -7,6 +7,8 @@ TagManager:
   - Icon
   - IconOption
   - TableData
+  - Taskbar
+  - Calendar
   layers:
   - Default
   - TransparentFX

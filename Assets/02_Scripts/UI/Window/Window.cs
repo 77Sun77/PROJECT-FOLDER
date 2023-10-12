@@ -187,7 +187,7 @@ public class Window : MonoBehaviour
     {
         //Destroy(gameObject);
         Taskbar.instance.Delete_Obj(gameObject, isPrefab);
-        f.go = null;
+        //f.go = null;
     }
 
 

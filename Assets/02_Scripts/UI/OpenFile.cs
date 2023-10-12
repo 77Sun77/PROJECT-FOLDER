@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-
+using TMPro;
 public static class String
 {
     public static int GetCount(string s, char c)
@@ -22,8 +22,8 @@ public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler
     public bool isPrefab;
     public GameObject go;
 
-    public Text nameTxt;
-    Image img;
+    public TextMeshProUGUI nameTxt;
+    Image img, icon;
 
     //Double Click 처리용 변수
     public static GameObject SelectFile;
@@ -32,13 +32,21 @@ public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler
     private bool m_IsOneClick = false;
     private double m_Timer = 0;
     private bool PointerUp, OnDrag;
-    public bool DontDestroy, isFolder;
+    public bool DontDestroy, isFolder, isRecycleBin, inFolder;
     Vector2 clickVec, offset;
 
     bool OnClick;
+
+    public TableData thisTable;
+    public Transform ContentsParent;
+    public List<GameObject> Contents = new List<GameObject>();
+
     private void Start()
     {
-
+        MovePoint();
+        nameTxt = transform.Find("Name").GetComponent<TextMeshProUGUI>();
+        icon = transform.Find("Icon").GetComponent<Image>();
+        /*
         if (nameTxt)
         {
             string txt = nameTxt.text.Replace(" ", "");
@@ -52,8 +60,24 @@ public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler
                 nameTxt.text = txt;
 
             }
-        }
+        }*/
         img = GetComponent<Image>();
+
+        if (isPrefab)
+        {
+            go = Instantiate(window, GameManager.instance.windowParent);
+            go.name = gameObject.name + " Window";
+            go.GetComponent<Window>().f = this;
+            go.SetActive(false);
+        }
+        else
+        {
+            go = window;
+        }
+        ContentsParent = go.transform.Find("Contents");
+
+
+
     }
     void Update()
     {
@@ -99,21 +123,7 @@ public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler
             clickVec = Vector2.zero;
             if (OnDrag)
             {
-                var results = GameManager.instance.UR.UI_Raycast(Camera.main.WorldToScreenPoint(transform.position));
-                if (results.Count != 0)
-                {
-                    foreach (RaycastResult result in results)
-                    {
-                        
-                        if (result.gameObject.CompareTag("TableData"))
-                        {
-                            
-                            transform.position = result.gameObject.transform.position;
-                            break;
-                        }
-                        
-                    }
-                }
+                MovePoint();
                 OnDrag = false;
 
             }
@@ -181,6 +191,7 @@ public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler
         m_Timer = 0;
         m_IsOneClick = false;
         SelectFile = null;
+        clickVec = Vector2.zero;
         if (!go)
         {
             if (isPrefab) go = Instantiate(window, GameManager.instance.screen);
@@ -190,13 +201,18 @@ public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler
                 go = window;
 
             }
-            Taskbar.instance.Add_Obj(go, this);
+            window.SetActive(true);
+            go = window;
+            Taskbar.instance.Add_Obj(go, this, icon.sprite);
             go.GetComponent<Window>().f = this;
         }
         else
         {
             Active();
         }
+        window.SetActive(true);
+        Taskbar.instance.Add_Obj(go, this, icon.sprite);
+        
         go.GetComponent<Window>().isPrefab = isPrefab;
 
 
@@ -214,5 +230,34 @@ public class OpenFile : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler
             win.Minimization();
         }
 
+    }
+
+    public void AddFile(GameObject file)
+    {
+        //Contents.Add(file);
+        file.transform.parent = ContentsParent;
+        inFolder = true;
+    }
+
+    void MovePoint()
+    {
+        var results = GameManager.instance.UR.UI_Raycast(Camera.main.WorldToScreenPoint(transform.position));
+        if (results.Count != 0)
+        {
+            foreach (RaycastResult result in results)
+            {
+
+                if (result.gameObject.CompareTag("TableData"))
+                {
+                    result.gameObject.GetComponent<TableData>().ChangePos(this);
+
+                    break;
+                }
+                else if (thisTable)
+                {
+                    transform.position = thisTable.transform.position;
+                }
+            }
+        }
     }
 }
